@@ -10,10 +10,6 @@ public class WhaleOptimizationAlgorithmRunner
     readonly OptFunc _optimizationFunction;
     readonly WhaleOptimizationAlgorithmParameters _parameters;
 
-    // Zakres zmiennych (dla testowej funkcji Sphere)
-    const double minX = -10.0;
-    const double maxX = 10.0;
-
     public WhaleOptimizationAlgorithmRunner(WhaleOptimizationAlgorithmParameters parameters)
     {
         _parameters = parameters;
@@ -65,7 +61,7 @@ public class WhaleOptimizationAlgorithmRunner
             }
 
             bestWhale = GetBestWhale(whales);
-            Console.WriteLine($"Iteracja {iter + 1}: Najlepsze rozwiązanie = {SphereFunction(bestWhale)}");
+            Console.WriteLine($"Iteracja {iter + 1}: [{string.Join(";", bestWhale)}] Najlepsze rozwiązanie = {_optimizationFunction(bestWhale)}");
         }
 
         Console.WriteLine("Optymalizacja zakończona.");
@@ -79,7 +75,7 @@ public class WhaleOptimizationAlgorithmRunner
         {
             population[i] = new double[_parameters.Dimensions];
             for (int j = 0; j < _parameters.Dimensions; j++)
-                population[i][j] = minX + (maxX - minX) * rand.NextDouble();
+                population[i][j] = _parameters.MinX + (_parameters.MaxX - _parameters.MinX) * rand.NextDouble();
         }
         return population;
     }
@@ -101,18 +97,9 @@ public class WhaleOptimizationAlgorithmRunner
         return best;
     }
 
-    // Funkcja testowa Sphere: f(x) = sum(x_i^2)
-    static double SphereFunction(double[] solution)
-    {
-        double sum = 0;
-        foreach (var x in solution)
-            sum += x * x;
-        return sum;
-    }
-
     // Ograniczenie wartości do zakresu [minX, maxX]
-    static double Clamp(double value)
+    double Clamp(double value)
     {
-        return Math.Max(minX, Math.Min(maxX, value));
+        return Math.Max(_parameters.MinX, Math.Min(_parameters.MaxX, value));
     }
 }
